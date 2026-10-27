@@ -1,0 +1,3853 @@
+{
+  "trigger_type": "first_inbound_message",
+  "trigger_config": {
+    "restart_keywords": [
+      "menu",
+      "main menu",
+      "restart",
+      "start over",
+      "మెనూ",
+      "मेनू"
+    ]
+  },
+  "fallback_policy": {
+    "on_unknown_reply": "reprompt",
+    "max_reprompts": 2,
+    "on_timeout_hours": 24,
+    "on_exhaust": "handoff"
+  },
+  "entry_node_id": "start",
+  "scoring": {
+    "rules": [
+      {
+        "var_key": "timeline",
+        "values": [
+          "timeline_1m"
+        ],
+        "points": 30,
+        "label": "Install within 1 month"
+      },
+      {
+        "var_key": "timeline",
+        "values": [
+          "timeline_3m"
+        ],
+        "points": 20,
+        "label": "Install in 1–3 months"
+      },
+      {
+        "var_key": "timeline",
+        "values": [
+          "timeline_6m"
+        ],
+        "points": 10,
+        "label": "Install in 3–6 months"
+      },
+      {
+        "var_key": "res_bill",
+        "values": [
+          "res_bill_4000_8000",
+          "res_bill_8000_15000",
+          "res_bill_gt_15000"
+        ],
+        "points": 25,
+        "label": "Home bill ₹4,000+"
+      },
+      {
+        "var_key": "res_bill",
+        "values": [
+          "res_bill_2500_4000"
+        ],
+        "points": 15,
+        "label": "Home bill ₹2,500–₹4,000"
+      },
+      {
+        "var_key": "res_bill",
+        "values": [
+          "res_bill_1500_2500"
+        ],
+        "points": 5,
+        "label": "Home bill ₹1,500–₹2,500"
+      },
+      {
+        "var_key": "com_bill",
+        "values": [
+          "com_bill_50000_100000",
+          "com_bill_100000_500000",
+          "com_bill_gt_500000"
+        ],
+        "points": 25,
+        "label": "Business bill ₹50,000+"
+      },
+      {
+        "var_key": "com_bill",
+        "values": [
+          "com_bill_10000_25000",
+          "com_bill_25000_50000"
+        ],
+        "points": 15,
+        "label": "Business bill ₹10,000–₹50,000"
+      },
+      {
+        "var_key": "soc_homes",
+        "values": [
+          "soc_homes_100_250",
+          "soc_homes_gt_250"
+        ],
+        "points": 25,
+        "label": "Society with 100+ homes"
+      },
+      {
+        "var_key": "soc_homes",
+        "values": [
+          "soc_homes_50_100"
+        ],
+        "points": 15,
+        "label": "Society with 50–100 homes"
+      },
+      {
+        "var_key": "soc_homes",
+        "values": [
+          "soc_homes_25_50"
+        ],
+        "points": 5,
+        "label": "Society with 25–50 homes"
+      },
+      {
+        "var_key": "soc_role",
+        "values": [
+          "soc_role_committee",
+          "soc_role_builder"
+        ],
+        "points": 10,
+        "label": "Society decision-maker"
+      },
+      {
+        "var_key": "pump_hp",
+        "values": [
+          "pump_hp_5",
+          "pump_hp_7_5",
+          "pump_hp_10"
+        ],
+        "points": 15,
+        "label": "Pump 5 HP+"
+      },
+      {
+        "var_key": "pump_connection",
+        "values": [
+          "pump_conn_diesel"
+        ],
+        "points": 10,
+        "label": "Replacing a diesel pump"
+      },
+      {
+        "var_key": "bat_appliances",
+        "values": [
+          "bat_load_heavy",
+          "bat_load_full"
+        ],
+        "points": 15,
+        "label": "Heavy backup load"
+      },
+      {
+        "var_key": "bat_existing",
+        "values": [
+          "bat_solar_yes"
+        ],
+        "points": 10,
+        "label": "Already has solar"
+      },
+      {
+        "var_key": "res_roof",
+        "values": [
+          "res_roof_rcc"
+        ],
+        "points": 10,
+        "label": "Concrete roof"
+      },
+      {
+        "var_key": "com_site",
+        "values": [
+          "com_site_rcc",
+          "com_site_land",
+          "com_site_both"
+        ],
+        "points": 10,
+        "label": "Suitable site"
+      },
+      {
+        "var_key": "soc_rooftop",
+        "values": [
+          "soc_roof_yes"
+        ],
+        "points": 10,
+        "label": "Rooftop available"
+      },
+      {
+        "var_key": "callback_consent",
+        "values": [
+          "callback_yes",
+          "callback_choose_time"
+        ],
+        "points": 20,
+        "label": "Asked for a callback"
+      }
+    ],
+    "bands": [
+      {
+        "label": "HOT",
+        "min_score": 60
+      },
+      {
+        "label": "WARM",
+        "min_score": 30
+      }
+    ],
+    "fallback_label": "NURTURE",
+    "score_var": "lead_score",
+    "category_var": "lead_priority"
+  },
+  "nodes": {
+    "crm_update": {
+      "type": "update_contact",
+      "config": {
+        "fields": [
+          {
+            "target": "name",
+            "value": "{{vars.customer_name}}",
+            "value_map": {
+              "name_skip": ""
+            }
+          },
+          {
+            "target": "custom:field-8",
+            "value": "{{vars.language}}",
+            "value_map": {
+              "lang_te": "Telugu",
+              "lang_hi": "Hindi",
+              "lang_en": "English"
+            }
+          },
+          {
+            "target": "custom:field-3",
+            "value": "{{vars.solar_category}}",
+            "value_map": {
+              "solar_residential": "Residential rooftop",
+              "solar_commercial": "Commercial",
+              "solar_society": "Housing society",
+              "solar_pump": "Solar water pump",
+              "solar_battery": "Battery / backup",
+              "solar_talk_sales": "Talk to sales team"
+            }
+          },
+          {
+            "target": "custom:field-1",
+            "value": "{{vars.res_property}}",
+            "value_map": {
+              "res_prop_house": "Independent house",
+              "res_prop_apartment": "Apartment / flat",
+              "res_prop_villa": "Villa",
+              "res_prop_other": "Other",
+              "res_prop_unsure": "Not sure"
+            }
+          },
+          {
+            "target": "custom:field-1",
+            "value": "{{vars.com_business}}",
+            "value_map": {
+              "com_biz_shop": "Shop / showroom",
+              "com_biz_office": "Office",
+              "com_biz_factory": "Factory / industry",
+              "com_biz_hotel": "Hotel / restaurant",
+              "com_biz_institution": "Hospital / school",
+              "com_biz_warehouse": "Warehouse / cold storage",
+              "com_biz_other": "Other"
+            }
+          },
+          {
+            "target": "custom:field-1",
+            "value": "{{vars.bat_property}}",
+            "value_map": {
+              "bat_prop_house": "House",
+              "bat_prop_apartment": "Apartment",
+              "bat_prop_shop": "Shop / office",
+              "bat_prop_factory": "Factory",
+              "bat_prop_farm": "Farm",
+              "bat_prop_other": "Other"
+            }
+          },
+          {
+            "target": "custom:field-2",
+            "value": "{{vars.res_bill}}",
+            "value_map": {
+              "res_bill_lt_1500": "Below ₹1,500",
+              "res_bill_1500_2500": "₹1,500–₹2,500",
+              "res_bill_2500_4000": "₹2,500–₹4,000",
+              "res_bill_4000_8000": "₹4,000–₹8,000",
+              "res_bill_8000_15000": "₹8,000–₹15,000",
+              "res_bill_gt_15000": "Above ₹15,000",
+              "res_bill_unsure": "Not sure"
+            }
+          },
+          {
+            "target": "custom:field-2",
+            "value": "{{vars.com_bill}}",
+            "value_map": {
+              "com_bill_lt_10000": "Below ₹10,000",
+              "com_bill_10000_25000": "₹10,000–₹25,000",
+              "com_bill_25000_50000": "₹25,000–₹50,000",
+              "com_bill_50000_100000": "₹50,000–₹1,00,000",
+              "com_bill_100000_500000": "₹1,00,000–₹5,00,000",
+              "com_bill_gt_500000": "Above ₹5,00,000",
+              "com_bill_unsure": "Not sure"
+            }
+          },
+          {
+            "target": "custom:field-0",
+            "value": "{{vars.city}}",
+            "value_map": {
+              "city_skip": ""
+            }
+          },
+          {
+            "target": "custom:field-10",
+            "value": "{{vars.timeline}}",
+            "value_map": {
+              "timeline_1m": "Within 1 month",
+              "timeline_3m": "1–3 months",
+              "timeline_6m": "3–6 months",
+              "timeline_exploring": "Just exploring",
+              "timeline_unsure": "Not sure"
+            }
+          },
+          {
+            "target": "custom:field-11",
+            "value": "{{vars.res_roof}}",
+            "value_map": {
+              "res_roof_rcc": "Concrete (RCC) roof",
+              "res_roof_sheet": "Metal / tin sheet",
+              "res_roof_tile": "Tiled roof",
+              "res_roof_shared": "Shared terrace",
+              "res_roof_unsure": "Not sure"
+            }
+          },
+          {
+            "target": "custom:field-11",
+            "value": "{{vars.com_site}}",
+            "value_map": {
+              "com_site_rcc": "Concrete rooftop",
+              "com_site_sheet": "Metal sheet roof",
+              "com_site_land": "Open land",
+              "com_site_both": "Rooftop and land",
+              "com_site_unsure": "Not sure"
+            }
+          },
+          {
+            "target": "custom:field-11",
+            "value": "{{vars.soc_rooftop}}",
+            "value_map": {
+              "soc_roof_yes": "Yes, available",
+              "soc_roof_partly": "Partly",
+              "soc_roof_unsure": "Not sure"
+            }
+          },
+          {
+            "target": "custom:field-12",
+            "value": "{{vars.callback_consent}}",
+            "value_map": {
+              "callback_yes": "Yes, call me",
+              "callback_choose_time": "Callback at a chosen time",
+              "callback_not_now": "Not now"
+            }
+          },
+          {
+            "target": "custom:field-13",
+            "value": "{{vars.callback_time}}",
+            "value_map": {
+              "callback_morning": "Morning (9am–12pm)",
+              "callback_afternoon": "Afternoon (12pm–4pm)",
+              "callback_evening": "Evening (4pm–7pm)",
+              "callback_anytime": "Any time"
+            }
+          },
+          {
+            "target": "custom:field-5",
+            "value": "{{vars.lead_priority}}"
+          },
+          {
+            "target": "custom:field-9",
+            "value": "{{vars.lead_score}}"
+          },
+          {
+            "target": "custom:field-14",
+            "value": "{{vars.lead_priority}} · {{vars.lead_score}} points · {{vars.lead_priority_reasons}}"
+          },
+          {
+            "target": "custom:field-4",
+            "value": "WhatsApp"
+          },
+          {
+            "target": "custom:field-7",
+            "value": "New Lead"
+          },
+          {
+            "target": "custom:field-6",
+            "value": "{{today+1}}"
+          }
+        ],
+        "note": "WhatsApp lead qualification (Suraj Solar flow)\nLanguage: {{vars.language_label}}\nRequirement: {{vars.solar_category_label}}\nProperty: {{vars.res_property_label}}\nBusiness type: {{vars.com_business_label}}\nSociety: {{vars.soc_name_label}}\nHomes in society: {{vars.soc_homes_label}}\nCommon-area needs: {{vars.soc_needs_label}}\nRole: {{vars.soc_role_label}}\nPump use: {{vars.pump_use_label}}\nPump capacity: {{vars.pump_hp_label}}\nCurrent pump power: {{vars.pump_connection_label}}\nExisting solar: {{vars.bat_existing_label}}\nBackup need: {{vars.bat_backup_label}}\nBackup appliances: {{vars.bat_appliances_label}}\nBattery property: {{vars.bat_property_label}}\nMonthly bill: {{vars.res_bill_label}}{{vars.com_bill_label}}\nLocation: {{vars.city_label}}\nRoof / site: {{vars.res_roof_label}}{{vars.com_site_label}}{{vars.soc_rooftop_label}}\nTimeline: {{vars.timeline_label}}\nCallback: {{vars.callback_consent_label}}\nCallback time: {{vars.callback_time_label}}\nPriority: {{vars.lead_priority}} ({{vars.lead_score}} points)\nScore reasons: {{vars.lead_priority_reasons}}",
+        "next_node_key": "tag_new_enquiry"
+      }
+    },
+    "en_bat_1": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "bat_solar_yes",
+            "next_node_key": "en_bat_2"
+          },
+          {
+            "reply_id": "bat_solar_no",
+            "next_node_key": "en_bat_2"
+          },
+          {
+            "reply_id": "bat_solar_unsure",
+            "next_node_key": "en_bat_2"
+          }
+        ],
+        "save_as": "bat_existing",
+        "text_reply_next": "en_bat_2"
+      }
+    },
+    "en_bat_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_need_cuts",
+                "next_node_key": "en_bat_3"
+              },
+              {
+                "reply_id": "bat_need_business",
+                "next_node_key": "en_bat_3"
+              },
+              {
+                "reply_id": "bat_need_offgrid",
+                "next_node_key": "en_bat_3"
+              },
+              {
+                "reply_id": "bat_need_unsure",
+                "next_node_key": "en_bat_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_backup",
+        "text_reply_next": "en_bat_3"
+      }
+    },
+    "en_bat_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_load_basic",
+                "next_node_key": "en_bat_4"
+              },
+              {
+                "reply_id": "bat_load_medium",
+                "next_node_key": "en_bat_4"
+              },
+              {
+                "reply_id": "bat_load_heavy",
+                "next_node_key": "en_bat_4"
+              },
+              {
+                "reply_id": "bat_load_full",
+                "next_node_key": "en_bat_4"
+              },
+              {
+                "reply_id": "bat_load_unsure",
+                "next_node_key": "en_bat_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_appliances",
+        "text_reply_next": "en_bat_4"
+      }
+    },
+    "en_bat_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_prop_house",
+                "next_node_key": "en_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_apartment",
+                "next_node_key": "en_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_shop",
+                "next_node_key": "en_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_factory",
+                "next_node_key": "en_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_farm",
+                "next_node_key": "en_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_other",
+                "next_node_key": "en_bat_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_property",
+        "text_reply_next": "en_bat_5"
+      }
+    },
+    "en_bat_5": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "en_bat_6"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "en_bat_6"
+      }
+    },
+    "en_bat_6": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "en_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "en_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "en_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "en_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "en_bat_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "en_bat_name_check"
+      }
+    },
+    "en_bat_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "en_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "en_confirm"
+      }
+    },
+    "en_bat_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "en_confirm",
+        "false_next": "en_bat_name"
+      }
+    },
+    "en_callback_time": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "callback_morning",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_afternoon",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_evening",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_anytime",
+                "next_node_key": "score"
+              }
+            ]
+          }
+        ],
+        "save_as": "callback_time",
+        "text_reply_next": "score"
+      }
+    },
+    "en_category": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "solar_residential",
+                "next_node_key": "en_res_1"
+              },
+              {
+                "reply_id": "solar_commercial",
+                "next_node_key": "en_com_1"
+              },
+              {
+                "reply_id": "solar_society",
+                "next_node_key": "en_soc_1"
+              },
+              {
+                "reply_id": "solar_pump",
+                "next_node_key": "en_pump_1"
+              },
+              {
+                "reply_id": "solar_battery",
+                "next_node_key": "en_bat_1"
+              },
+              {
+                "reply_id": "solar_talk_sales",
+                "next_node_key": "en_talk_sales"
+              }
+            ]
+          }
+        ],
+        "save_as": "solar_category"
+      }
+    },
+    "en_com_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_biz_shop",
+                "next_node_key": "en_com_2"
+              },
+              {
+                "reply_id": "com_biz_office",
+                "next_node_key": "en_com_2"
+              },
+              {
+                "reply_id": "com_biz_factory",
+                "next_node_key": "en_com_2"
+              },
+              {
+                "reply_id": "com_biz_hotel",
+                "next_node_key": "en_com_2"
+              },
+              {
+                "reply_id": "com_biz_institution",
+                "next_node_key": "en_com_2"
+              },
+              {
+                "reply_id": "com_biz_warehouse",
+                "next_node_key": "en_com_2"
+              },
+              {
+                "reply_id": "com_biz_other",
+                "next_node_key": "en_com_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_business",
+        "text_reply_next": "en_com_2"
+      }
+    },
+    "en_com_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_bill_lt_10000",
+                "next_node_key": "en_com_3"
+              },
+              {
+                "reply_id": "com_bill_10000_25000",
+                "next_node_key": "en_com_3"
+              },
+              {
+                "reply_id": "com_bill_25000_50000",
+                "next_node_key": "en_com_3"
+              },
+              {
+                "reply_id": "com_bill_50000_100000",
+                "next_node_key": "en_com_3"
+              },
+              {
+                "reply_id": "com_bill_100000_500000",
+                "next_node_key": "en_com_3"
+              },
+              {
+                "reply_id": "com_bill_gt_500000",
+                "next_node_key": "en_com_3"
+              },
+              {
+                "reply_id": "com_bill_unsure",
+                "next_node_key": "en_com_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_bill",
+        "text_reply_next": "en_com_3"
+      }
+    },
+    "en_com_3": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "en_com_4"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "en_com_4"
+      }
+    },
+    "en_com_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_site_rcc",
+                "next_node_key": "en_com_5"
+              },
+              {
+                "reply_id": "com_site_sheet",
+                "next_node_key": "en_com_5"
+              },
+              {
+                "reply_id": "com_site_land",
+                "next_node_key": "en_com_5"
+              },
+              {
+                "reply_id": "com_site_both",
+                "next_node_key": "en_com_5"
+              },
+              {
+                "reply_id": "com_site_unsure",
+                "next_node_key": "en_com_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_site",
+        "text_reply_next": "en_com_5"
+      }
+    },
+    "en_com_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "en_com_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "en_com_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "en_com_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "en_com_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "en_com_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "en_com_name_check"
+      }
+    },
+    "en_com_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "en_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "en_confirm"
+      }
+    },
+    "en_com_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "en_confirm",
+        "false_next": "en_com_name"
+      }
+    },
+    "en_confirm": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "callback_yes",
+            "next_node_key": "score"
+          },
+          {
+            "reply_id": "callback_choose_time",
+            "next_node_key": "en_callback_time"
+          },
+          {
+            "reply_id": "callback_not_now",
+            "next_node_key": "score"
+          }
+        ],
+        "save_as": "callback_consent",
+        "text_reply_next": "score"
+      }
+    },
+    "en_consent_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "callback_consent",
+        "operator": "equals",
+        "value": "callback_yes",
+        "true_next": "en_final_callback",
+        "false_next": "en_time_check"
+      }
+    },
+    "en_final_callback": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "handoff"
+      }
+    },
+    "en_final_not_now": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "handoff"
+      }
+    },
+    "en_pump_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_use_irrigation",
+                "next_node_key": "en_pump_2"
+              },
+              {
+                "reply_id": "pump_use_drinking",
+                "next_node_key": "en_pump_2"
+              },
+              {
+                "reply_id": "pump_use_livestock",
+                "next_node_key": "en_pump_2"
+              },
+              {
+                "reply_id": "pump_use_other",
+                "next_node_key": "en_pump_2"
+              },
+              {
+                "reply_id": "pump_use_unsure",
+                "next_node_key": "en_pump_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_use",
+        "text_reply_next": "en_pump_2"
+      }
+    },
+    "en_pump_2": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "en_pump_3"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "en_pump_3"
+      }
+    },
+    "en_pump_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_hp_3",
+                "next_node_key": "en_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_5",
+                "next_node_key": "en_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_7_5",
+                "next_node_key": "en_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_10",
+                "next_node_key": "en_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_unsure",
+                "next_node_key": "en_pump_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_hp",
+        "text_reply_next": "en_pump_4"
+      }
+    },
+    "en_pump_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_conn_grid",
+                "next_node_key": "en_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_diesel",
+                "next_node_key": "en_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_none",
+                "next_node_key": "en_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_unsure",
+                "next_node_key": "en_pump_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_connection",
+        "text_reply_next": "en_pump_5"
+      }
+    },
+    "en_pump_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "en_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "en_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "en_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "en_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "en_pump_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "en_pump_name_check"
+      }
+    },
+    "en_pump_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "en_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "en_confirm"
+      }
+    },
+    "en_pump_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "en_confirm",
+        "false_next": "en_pump_name"
+      }
+    },
+    "en_res_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_prop_house",
+                "next_node_key": "en_res_2"
+              },
+              {
+                "reply_id": "res_prop_apartment",
+                "next_node_key": "en_res_2"
+              },
+              {
+                "reply_id": "res_prop_villa",
+                "next_node_key": "en_res_2"
+              },
+              {
+                "reply_id": "res_prop_other",
+                "next_node_key": "en_res_2"
+              },
+              {
+                "reply_id": "res_prop_unsure",
+                "next_node_key": "en_res_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_property",
+        "text_reply_next": "en_res_2"
+      }
+    },
+    "en_res_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_bill_lt_1500",
+                "next_node_key": "en_res_3"
+              },
+              {
+                "reply_id": "res_bill_1500_2500",
+                "next_node_key": "en_res_3"
+              },
+              {
+                "reply_id": "res_bill_2500_4000",
+                "next_node_key": "en_res_3"
+              },
+              {
+                "reply_id": "res_bill_4000_8000",
+                "next_node_key": "en_res_3"
+              },
+              {
+                "reply_id": "res_bill_8000_15000",
+                "next_node_key": "en_res_3"
+              },
+              {
+                "reply_id": "res_bill_gt_15000",
+                "next_node_key": "en_res_3"
+              },
+              {
+                "reply_id": "res_bill_unsure",
+                "next_node_key": "en_res_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_bill",
+        "text_reply_next": "en_res_3"
+      }
+    },
+    "en_res_3": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "en_res_4"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "en_res_4"
+      }
+    },
+    "en_res_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_roof_rcc",
+                "next_node_key": "en_res_5"
+              },
+              {
+                "reply_id": "res_roof_sheet",
+                "next_node_key": "en_res_5"
+              },
+              {
+                "reply_id": "res_roof_tile",
+                "next_node_key": "en_res_5"
+              },
+              {
+                "reply_id": "res_roof_shared",
+                "next_node_key": "en_res_5"
+              },
+              {
+                "reply_id": "res_roof_unsure",
+                "next_node_key": "en_res_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_roof",
+        "text_reply_next": "en_res_5"
+      }
+    },
+    "en_res_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "en_res_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "en_res_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "en_res_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "en_res_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "en_res_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "en_res_name_check"
+      }
+    },
+    "en_res_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "en_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "en_confirm"
+      }
+    },
+    "en_res_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "en_confirm",
+        "false_next": "en_res_name"
+      }
+    },
+    "en_soc_1": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "soc_name_skip",
+            "next_node_key": "en_soc_2"
+          }
+        ],
+        "save_as": "soc_name",
+        "text_reply_next": "en_soc_2"
+      }
+    },
+    "en_soc_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_homes_lt_25",
+                "next_node_key": "en_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_25_50",
+                "next_node_key": "en_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_50_100",
+                "next_node_key": "en_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_100_250",
+                "next_node_key": "en_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_gt_250",
+                "next_node_key": "en_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_unsure",
+                "next_node_key": "en_soc_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_homes",
+        "text_reply_next": "en_soc_3"
+      }
+    },
+    "en_soc_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_needs_lighting",
+                "next_node_key": "en_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_lifts",
+                "next_node_key": "en_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_all",
+                "next_node_key": "en_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_ev",
+                "next_node_key": "en_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_unsure",
+                "next_node_key": "en_soc_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_needs",
+        "text_reply_next": "en_soc_4"
+      }
+    },
+    "en_soc_4": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "en_soc_5"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "en_soc_5"
+      }
+    },
+    "en_soc_5": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "soc_roof_yes",
+            "next_node_key": "en_soc_6"
+          },
+          {
+            "reply_id": "soc_roof_partly",
+            "next_node_key": "en_soc_6"
+          },
+          {
+            "reply_id": "soc_roof_unsure",
+            "next_node_key": "en_soc_6"
+          }
+        ],
+        "save_as": "soc_rooftop",
+        "text_reply_next": "en_soc_6"
+      }
+    },
+    "en_soc_6": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_role_committee",
+                "next_node_key": "en_soc_7"
+              },
+              {
+                "reply_id": "soc_role_manager",
+                "next_node_key": "en_soc_7"
+              },
+              {
+                "reply_id": "soc_role_resident",
+                "next_node_key": "en_soc_7"
+              },
+              {
+                "reply_id": "soc_role_builder",
+                "next_node_key": "en_soc_7"
+              },
+              {
+                "reply_id": "soc_role_other",
+                "next_node_key": "en_soc_7"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_role",
+        "text_reply_next": "en_soc_7"
+      }
+    },
+    "en_soc_7": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "en_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "en_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "en_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "en_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "en_soc_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "en_soc_name_check"
+      }
+    },
+    "en_soc_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "en_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "en_confirm"
+      }
+    },
+    "en_soc_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "en_confirm",
+        "false_next": "en_soc_name"
+      }
+    },
+    "en_talk_sales": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "sales_request_crm"
+      }
+    },
+    "en_time_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "callback_time",
+        "operator": "present",
+        "true_next": "en_final_callback",
+        "false_next": "en_final_not_now"
+      }
+    },
+    "handoff": {
+      "type": "handoff",
+      "config": {
+        "note": "Suraj Solar lead qualification completed — answers, score and callback preference are on the contact.",
+        "assign_mode": "round_robin"
+      }
+    },
+    "hi_bat_1": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "bat_solar_yes",
+            "next_node_key": "hi_bat_2"
+          },
+          {
+            "reply_id": "bat_solar_no",
+            "next_node_key": "hi_bat_2"
+          },
+          {
+            "reply_id": "bat_solar_unsure",
+            "next_node_key": "hi_bat_2"
+          }
+        ],
+        "save_as": "bat_existing",
+        "text_reply_next": "hi_bat_2"
+      }
+    },
+    "hi_bat_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_need_cuts",
+                "next_node_key": "hi_bat_3"
+              },
+              {
+                "reply_id": "bat_need_business",
+                "next_node_key": "hi_bat_3"
+              },
+              {
+                "reply_id": "bat_need_offgrid",
+                "next_node_key": "hi_bat_3"
+              },
+              {
+                "reply_id": "bat_need_unsure",
+                "next_node_key": "hi_bat_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_backup",
+        "text_reply_next": "hi_bat_3"
+      }
+    },
+    "hi_bat_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_load_basic",
+                "next_node_key": "hi_bat_4"
+              },
+              {
+                "reply_id": "bat_load_medium",
+                "next_node_key": "hi_bat_4"
+              },
+              {
+                "reply_id": "bat_load_heavy",
+                "next_node_key": "hi_bat_4"
+              },
+              {
+                "reply_id": "bat_load_full",
+                "next_node_key": "hi_bat_4"
+              },
+              {
+                "reply_id": "bat_load_unsure",
+                "next_node_key": "hi_bat_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_appliances",
+        "text_reply_next": "hi_bat_4"
+      }
+    },
+    "hi_bat_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_prop_house",
+                "next_node_key": "hi_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_apartment",
+                "next_node_key": "hi_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_shop",
+                "next_node_key": "hi_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_factory",
+                "next_node_key": "hi_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_farm",
+                "next_node_key": "hi_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_other",
+                "next_node_key": "hi_bat_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_property",
+        "text_reply_next": "hi_bat_5"
+      }
+    },
+    "hi_bat_5": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "hi_bat_6"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "hi_bat_6"
+      }
+    },
+    "hi_bat_6": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "hi_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "hi_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "hi_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "hi_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "hi_bat_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "hi_bat_name_check"
+      }
+    },
+    "hi_bat_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "hi_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "hi_confirm"
+      }
+    },
+    "hi_bat_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "hi_confirm",
+        "false_next": "hi_bat_name"
+      }
+    },
+    "hi_callback_time": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "callback_morning",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_afternoon",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_evening",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_anytime",
+                "next_node_key": "score"
+              }
+            ]
+          }
+        ],
+        "save_as": "callback_time",
+        "text_reply_next": "score"
+      }
+    },
+    "hi_category": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "solar_residential",
+                "next_node_key": "hi_res_1"
+              },
+              {
+                "reply_id": "solar_commercial",
+                "next_node_key": "hi_com_1"
+              },
+              {
+                "reply_id": "solar_society",
+                "next_node_key": "hi_soc_1"
+              },
+              {
+                "reply_id": "solar_pump",
+                "next_node_key": "hi_pump_1"
+              },
+              {
+                "reply_id": "solar_battery",
+                "next_node_key": "hi_bat_1"
+              },
+              {
+                "reply_id": "solar_talk_sales",
+                "next_node_key": "hi_talk_sales"
+              }
+            ]
+          }
+        ],
+        "save_as": "solar_category"
+      }
+    },
+    "hi_com_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_biz_shop",
+                "next_node_key": "hi_com_2"
+              },
+              {
+                "reply_id": "com_biz_office",
+                "next_node_key": "hi_com_2"
+              },
+              {
+                "reply_id": "com_biz_factory",
+                "next_node_key": "hi_com_2"
+              },
+              {
+                "reply_id": "com_biz_hotel",
+                "next_node_key": "hi_com_2"
+              },
+              {
+                "reply_id": "com_biz_institution",
+                "next_node_key": "hi_com_2"
+              },
+              {
+                "reply_id": "com_biz_warehouse",
+                "next_node_key": "hi_com_2"
+              },
+              {
+                "reply_id": "com_biz_other",
+                "next_node_key": "hi_com_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_business",
+        "text_reply_next": "hi_com_2"
+      }
+    },
+    "hi_com_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_bill_lt_10000",
+                "next_node_key": "hi_com_3"
+              },
+              {
+                "reply_id": "com_bill_10000_25000",
+                "next_node_key": "hi_com_3"
+              },
+              {
+                "reply_id": "com_bill_25000_50000",
+                "next_node_key": "hi_com_3"
+              },
+              {
+                "reply_id": "com_bill_50000_100000",
+                "next_node_key": "hi_com_3"
+              },
+              {
+                "reply_id": "com_bill_100000_500000",
+                "next_node_key": "hi_com_3"
+              },
+              {
+                "reply_id": "com_bill_gt_500000",
+                "next_node_key": "hi_com_3"
+              },
+              {
+                "reply_id": "com_bill_unsure",
+                "next_node_key": "hi_com_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_bill",
+        "text_reply_next": "hi_com_3"
+      }
+    },
+    "hi_com_3": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "hi_com_4"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "hi_com_4"
+      }
+    },
+    "hi_com_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_site_rcc",
+                "next_node_key": "hi_com_5"
+              },
+              {
+                "reply_id": "com_site_sheet",
+                "next_node_key": "hi_com_5"
+              },
+              {
+                "reply_id": "com_site_land",
+                "next_node_key": "hi_com_5"
+              },
+              {
+                "reply_id": "com_site_both",
+                "next_node_key": "hi_com_5"
+              },
+              {
+                "reply_id": "com_site_unsure",
+                "next_node_key": "hi_com_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_site",
+        "text_reply_next": "hi_com_5"
+      }
+    },
+    "hi_com_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "hi_com_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "hi_com_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "hi_com_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "hi_com_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "hi_com_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "hi_com_name_check"
+      }
+    },
+    "hi_com_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "hi_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "hi_confirm"
+      }
+    },
+    "hi_com_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "hi_confirm",
+        "false_next": "hi_com_name"
+      }
+    },
+    "hi_confirm": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "callback_yes",
+            "next_node_key": "score"
+          },
+          {
+            "reply_id": "callback_choose_time",
+            "next_node_key": "hi_callback_time"
+          },
+          {
+            "reply_id": "callback_not_now",
+            "next_node_key": "score"
+          }
+        ],
+        "save_as": "callback_consent",
+        "text_reply_next": "score"
+      }
+    },
+    "hi_consent_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "callback_consent",
+        "operator": "equals",
+        "value": "callback_yes",
+        "true_next": "hi_final_callback",
+        "false_next": "hi_time_check"
+      }
+    },
+    "hi_final_callback": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "handoff"
+      }
+    },
+    "hi_final_not_now": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "handoff"
+      }
+    },
+    "hi_pump_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_use_irrigation",
+                "next_node_key": "hi_pump_2"
+              },
+              {
+                "reply_id": "pump_use_drinking",
+                "next_node_key": "hi_pump_2"
+              },
+              {
+                "reply_id": "pump_use_livestock",
+                "next_node_key": "hi_pump_2"
+              },
+              {
+                "reply_id": "pump_use_other",
+                "next_node_key": "hi_pump_2"
+              },
+              {
+                "reply_id": "pump_use_unsure",
+                "next_node_key": "hi_pump_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_use",
+        "text_reply_next": "hi_pump_2"
+      }
+    },
+    "hi_pump_2": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "hi_pump_3"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "hi_pump_3"
+      }
+    },
+    "hi_pump_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_hp_3",
+                "next_node_key": "hi_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_5",
+                "next_node_key": "hi_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_7_5",
+                "next_node_key": "hi_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_10",
+                "next_node_key": "hi_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_unsure",
+                "next_node_key": "hi_pump_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_hp",
+        "text_reply_next": "hi_pump_4"
+      }
+    },
+    "hi_pump_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_conn_grid",
+                "next_node_key": "hi_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_diesel",
+                "next_node_key": "hi_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_none",
+                "next_node_key": "hi_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_unsure",
+                "next_node_key": "hi_pump_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_connection",
+        "text_reply_next": "hi_pump_5"
+      }
+    },
+    "hi_pump_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "hi_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "hi_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "hi_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "hi_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "hi_pump_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "hi_pump_name_check"
+      }
+    },
+    "hi_pump_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "hi_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "hi_confirm"
+      }
+    },
+    "hi_pump_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "hi_confirm",
+        "false_next": "hi_pump_name"
+      }
+    },
+    "hi_res_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_prop_house",
+                "next_node_key": "hi_res_2"
+              },
+              {
+                "reply_id": "res_prop_apartment",
+                "next_node_key": "hi_res_2"
+              },
+              {
+                "reply_id": "res_prop_villa",
+                "next_node_key": "hi_res_2"
+              },
+              {
+                "reply_id": "res_prop_other",
+                "next_node_key": "hi_res_2"
+              },
+              {
+                "reply_id": "res_prop_unsure",
+                "next_node_key": "hi_res_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_property",
+        "text_reply_next": "hi_res_2"
+      }
+    },
+    "hi_res_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_bill_lt_1500",
+                "next_node_key": "hi_res_3"
+              },
+              {
+                "reply_id": "res_bill_1500_2500",
+                "next_node_key": "hi_res_3"
+              },
+              {
+                "reply_id": "res_bill_2500_4000",
+                "next_node_key": "hi_res_3"
+              },
+              {
+                "reply_id": "res_bill_4000_8000",
+                "next_node_key": "hi_res_3"
+              },
+              {
+                "reply_id": "res_bill_8000_15000",
+                "next_node_key": "hi_res_3"
+              },
+              {
+                "reply_id": "res_bill_gt_15000",
+                "next_node_key": "hi_res_3"
+              },
+              {
+                "reply_id": "res_bill_unsure",
+                "next_node_key": "hi_res_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_bill",
+        "text_reply_next": "hi_res_3"
+      }
+    },
+    "hi_res_3": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "hi_res_4"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "hi_res_4"
+      }
+    },
+    "hi_res_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_roof_rcc",
+                "next_node_key": "hi_res_5"
+              },
+              {
+                "reply_id": "res_roof_sheet",
+                "next_node_key": "hi_res_5"
+              },
+              {
+                "reply_id": "res_roof_tile",
+                "next_node_key": "hi_res_5"
+              },
+              {
+                "reply_id": "res_roof_shared",
+                "next_node_key": "hi_res_5"
+              },
+              {
+                "reply_id": "res_roof_unsure",
+                "next_node_key": "hi_res_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_roof",
+        "text_reply_next": "hi_res_5"
+      }
+    },
+    "hi_res_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "hi_res_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "hi_res_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "hi_res_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "hi_res_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "hi_res_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "hi_res_name_check"
+      }
+    },
+    "hi_res_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "hi_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "hi_confirm"
+      }
+    },
+    "hi_res_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "hi_confirm",
+        "false_next": "hi_res_name"
+      }
+    },
+    "hi_soc_1": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "soc_name_skip",
+            "next_node_key": "hi_soc_2"
+          }
+        ],
+        "save_as": "soc_name",
+        "text_reply_next": "hi_soc_2"
+      }
+    },
+    "hi_soc_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_homes_lt_25",
+                "next_node_key": "hi_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_25_50",
+                "next_node_key": "hi_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_50_100",
+                "next_node_key": "hi_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_100_250",
+                "next_node_key": "hi_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_gt_250",
+                "next_node_key": "hi_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_unsure",
+                "next_node_key": "hi_soc_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_homes",
+        "text_reply_next": "hi_soc_3"
+      }
+    },
+    "hi_soc_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_needs_lighting",
+                "next_node_key": "hi_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_lifts",
+                "next_node_key": "hi_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_all",
+                "next_node_key": "hi_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_ev",
+                "next_node_key": "hi_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_unsure",
+                "next_node_key": "hi_soc_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_needs",
+        "text_reply_next": "hi_soc_4"
+      }
+    },
+    "hi_soc_4": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "hi_soc_5"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "hi_soc_5"
+      }
+    },
+    "hi_soc_5": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "soc_roof_yes",
+            "next_node_key": "hi_soc_6"
+          },
+          {
+            "reply_id": "soc_roof_partly",
+            "next_node_key": "hi_soc_6"
+          },
+          {
+            "reply_id": "soc_roof_unsure",
+            "next_node_key": "hi_soc_6"
+          }
+        ],
+        "save_as": "soc_rooftop",
+        "text_reply_next": "hi_soc_6"
+      }
+    },
+    "hi_soc_6": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_role_committee",
+                "next_node_key": "hi_soc_7"
+              },
+              {
+                "reply_id": "soc_role_manager",
+                "next_node_key": "hi_soc_7"
+              },
+              {
+                "reply_id": "soc_role_resident",
+                "next_node_key": "hi_soc_7"
+              },
+              {
+                "reply_id": "soc_role_builder",
+                "next_node_key": "hi_soc_7"
+              },
+              {
+                "reply_id": "soc_role_other",
+                "next_node_key": "hi_soc_7"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_role",
+        "text_reply_next": "hi_soc_7"
+      }
+    },
+    "hi_soc_7": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "hi_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "hi_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "hi_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "hi_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "hi_soc_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "hi_soc_name_check"
+      }
+    },
+    "hi_soc_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "hi_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "hi_confirm"
+      }
+    },
+    "hi_soc_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "hi_confirm",
+        "false_next": "hi_soc_name"
+      }
+    },
+    "hi_talk_sales": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "sales_request_crm"
+      }
+    },
+    "hi_time_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "callback_time",
+        "operator": "present",
+        "true_next": "hi_final_callback",
+        "false_next": "hi_final_not_now"
+      }
+    },
+    "hot_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "lead_priority",
+        "operator": "equals",
+        "value": "HOT",
+        "true_next": "tag_hot_lead",
+        "false_next": "lang_te_check"
+      }
+    },
+    "lang_hi_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "language",
+        "operator": "equals",
+        "value": "lang_hi",
+        "true_next": "hi_consent_check",
+        "false_next": "en_consent_check"
+      }
+    },
+    "lang_te_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "language",
+        "operator": "equals",
+        "value": "lang_te",
+        "true_next": "te_consent_check",
+        "false_next": "lang_hi_check"
+      }
+    },
+    "sales_request_crm": {
+      "type": "update_contact",
+      "config": {
+        "fields": [
+          {
+            "target": "custom:field-8",
+            "value": "{{vars.language}}",
+            "value_map": {
+              "lang_te": "Telugu",
+              "lang_hi": "Hindi",
+              "lang_en": "English"
+            }
+          },
+          {
+            "target": "custom:field-3",
+            "value": "{{vars.solar_category}}",
+            "value_map": {
+              "solar_residential": "Residential rooftop",
+              "solar_commercial": "Commercial",
+              "solar_society": "Housing society",
+              "solar_pump": "Solar water pump",
+              "solar_battery": "Battery / backup",
+              "solar_talk_sales": "Talk to sales team"
+            }
+          },
+          {
+            "target": "custom:field-4",
+            "value": "WhatsApp"
+          },
+          {
+            "target": "custom:field-7",
+            "value": "New Lead"
+          },
+          {
+            "target": "custom:field-6",
+            "value": "{{today+1}}"
+          }
+        ],
+        "note": "WhatsApp: customer asked to talk to the sales team (Suraj Solar flow)\nLanguage: {{vars.language_label}}",
+        "next_node_key": "handoff"
+      }
+    },
+    "score": {
+      "type": "score_lead",
+      "config": {
+        "rules": [
+          {
+            "var_key": "timeline",
+            "values": [
+              "timeline_1m"
+            ],
+            "points": 30,
+            "label": "Install within 1 month"
+          },
+          {
+            "var_key": "timeline",
+            "values": [
+              "timeline_3m"
+            ],
+            "points": 20,
+            "label": "Install in 1–3 months"
+          },
+          {
+            "var_key": "timeline",
+            "values": [
+              "timeline_6m"
+            ],
+            "points": 10,
+            "label": "Install in 3–6 months"
+          },
+          {
+            "var_key": "res_bill",
+            "values": [
+              "res_bill_4000_8000",
+              "res_bill_8000_15000",
+              "res_bill_gt_15000"
+            ],
+            "points": 25,
+            "label": "Home bill ₹4,000+"
+          },
+          {
+            "var_key": "res_bill",
+            "values": [
+              "res_bill_2500_4000"
+            ],
+            "points": 15,
+            "label": "Home bill ₹2,500–₹4,000"
+          },
+          {
+            "var_key": "res_bill",
+            "values": [
+              "res_bill_1500_2500"
+            ],
+            "points": 5,
+            "label": "Home bill ₹1,500–₹2,500"
+          },
+          {
+            "var_key": "com_bill",
+            "values": [
+              "com_bill_50000_100000",
+              "com_bill_100000_500000",
+              "com_bill_gt_500000"
+            ],
+            "points": 25,
+            "label": "Business bill ₹50,000+"
+          },
+          {
+            "var_key": "com_bill",
+            "values": [
+              "com_bill_10000_25000",
+              "com_bill_25000_50000"
+            ],
+            "points": 15,
+            "label": "Business bill ₹10,000–₹50,000"
+          },
+          {
+            "var_key": "soc_homes",
+            "values": [
+              "soc_homes_100_250",
+              "soc_homes_gt_250"
+            ],
+            "points": 25,
+            "label": "Society with 100+ homes"
+          },
+          {
+            "var_key": "soc_homes",
+            "values": [
+              "soc_homes_50_100"
+            ],
+            "points": 15,
+            "label": "Society with 50–100 homes"
+          },
+          {
+            "var_key": "soc_homes",
+            "values": [
+              "soc_homes_25_50"
+            ],
+            "points": 5,
+            "label": "Society with 25–50 homes"
+          },
+          {
+            "var_key": "soc_role",
+            "values": [
+              "soc_role_committee",
+              "soc_role_builder"
+            ],
+            "points": 10,
+            "label": "Society decision-maker"
+          },
+          {
+            "var_key": "pump_hp",
+            "values": [
+              "pump_hp_5",
+              "pump_hp_7_5",
+              "pump_hp_10"
+            ],
+            "points": 15,
+            "label": "Pump 5 HP+"
+          },
+          {
+            "var_key": "pump_connection",
+            "values": [
+              "pump_conn_diesel"
+            ],
+            "points": 10,
+            "label": "Replacing a diesel pump"
+          },
+          {
+            "var_key": "bat_appliances",
+            "values": [
+              "bat_load_heavy",
+              "bat_load_full"
+            ],
+            "points": 15,
+            "label": "Heavy backup load"
+          },
+          {
+            "var_key": "bat_existing",
+            "values": [
+              "bat_solar_yes"
+            ],
+            "points": 10,
+            "label": "Already has solar"
+          },
+          {
+            "var_key": "res_roof",
+            "values": [
+              "res_roof_rcc"
+            ],
+            "points": 10,
+            "label": "Concrete roof"
+          },
+          {
+            "var_key": "com_site",
+            "values": [
+              "com_site_rcc",
+              "com_site_land",
+              "com_site_both"
+            ],
+            "points": 10,
+            "label": "Suitable site"
+          },
+          {
+            "var_key": "soc_rooftop",
+            "values": [
+              "soc_roof_yes"
+            ],
+            "points": 10,
+            "label": "Rooftop available"
+          },
+          {
+            "var_key": "callback_consent",
+            "values": [
+              "callback_yes",
+              "callback_choose_time"
+            ],
+            "points": 20,
+            "label": "Asked for a callback"
+          }
+        ],
+        "bands": [
+          {
+            "label": "HOT",
+            "min_score": 60
+          },
+          {
+            "label": "WARM",
+            "min_score": 30
+          }
+        ],
+        "fallback_label": "NURTURE",
+        "score_var": "lead_score",
+        "category_var": "lead_priority",
+        "next_node_key": "crm_update"
+      }
+    },
+    "start": {
+      "type": "start",
+      "config": {
+        "next_node_key": "welcome"
+      }
+    },
+    "tag_hot_lead": {
+      "type": "set_tag",
+      "config": {
+        "mode": "add",
+        "tag_id": "tag-hot",
+        "next_node_key": "lang_te_check"
+      }
+    },
+    "tag_new_enquiry": {
+      "type": "set_tag",
+      "config": {
+        "mode": "add",
+        "tag_id": "tag-new",
+        "next_node_key": "hot_check"
+      }
+    },
+    "te_bat_1": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "bat_solar_yes",
+            "next_node_key": "te_bat_2"
+          },
+          {
+            "reply_id": "bat_solar_no",
+            "next_node_key": "te_bat_2"
+          },
+          {
+            "reply_id": "bat_solar_unsure",
+            "next_node_key": "te_bat_2"
+          }
+        ],
+        "save_as": "bat_existing",
+        "text_reply_next": "te_bat_2"
+      }
+    },
+    "te_bat_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_need_cuts",
+                "next_node_key": "te_bat_3"
+              },
+              {
+                "reply_id": "bat_need_business",
+                "next_node_key": "te_bat_3"
+              },
+              {
+                "reply_id": "bat_need_offgrid",
+                "next_node_key": "te_bat_3"
+              },
+              {
+                "reply_id": "bat_need_unsure",
+                "next_node_key": "te_bat_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_backup",
+        "text_reply_next": "te_bat_3"
+      }
+    },
+    "te_bat_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_load_basic",
+                "next_node_key": "te_bat_4"
+              },
+              {
+                "reply_id": "bat_load_medium",
+                "next_node_key": "te_bat_4"
+              },
+              {
+                "reply_id": "bat_load_heavy",
+                "next_node_key": "te_bat_4"
+              },
+              {
+                "reply_id": "bat_load_full",
+                "next_node_key": "te_bat_4"
+              },
+              {
+                "reply_id": "bat_load_unsure",
+                "next_node_key": "te_bat_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_appliances",
+        "text_reply_next": "te_bat_4"
+      }
+    },
+    "te_bat_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "bat_prop_house",
+                "next_node_key": "te_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_apartment",
+                "next_node_key": "te_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_shop",
+                "next_node_key": "te_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_factory",
+                "next_node_key": "te_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_farm",
+                "next_node_key": "te_bat_5"
+              },
+              {
+                "reply_id": "bat_prop_other",
+                "next_node_key": "te_bat_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "bat_property",
+        "text_reply_next": "te_bat_5"
+      }
+    },
+    "te_bat_5": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "te_bat_6"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "te_bat_6"
+      }
+    },
+    "te_bat_6": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "te_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "te_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "te_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "te_bat_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "te_bat_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "te_bat_name_check"
+      }
+    },
+    "te_bat_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "te_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "te_confirm"
+      }
+    },
+    "te_bat_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "te_confirm",
+        "false_next": "te_bat_name"
+      }
+    },
+    "te_callback_time": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "callback_morning",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_afternoon",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_evening",
+                "next_node_key": "score"
+              },
+              {
+                "reply_id": "callback_anytime",
+                "next_node_key": "score"
+              }
+            ]
+          }
+        ],
+        "save_as": "callback_time",
+        "text_reply_next": "score"
+      }
+    },
+    "te_category": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "solar_residential",
+                "next_node_key": "te_res_1"
+              },
+              {
+                "reply_id": "solar_commercial",
+                "next_node_key": "te_com_1"
+              },
+              {
+                "reply_id": "solar_society",
+                "next_node_key": "te_soc_1"
+              },
+              {
+                "reply_id": "solar_pump",
+                "next_node_key": "te_pump_1"
+              },
+              {
+                "reply_id": "solar_battery",
+                "next_node_key": "te_bat_1"
+              },
+              {
+                "reply_id": "solar_talk_sales",
+                "next_node_key": "te_talk_sales"
+              }
+            ]
+          }
+        ],
+        "save_as": "solar_category"
+      }
+    },
+    "te_com_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_biz_shop",
+                "next_node_key": "te_com_2"
+              },
+              {
+                "reply_id": "com_biz_office",
+                "next_node_key": "te_com_2"
+              },
+              {
+                "reply_id": "com_biz_factory",
+                "next_node_key": "te_com_2"
+              },
+              {
+                "reply_id": "com_biz_hotel",
+                "next_node_key": "te_com_2"
+              },
+              {
+                "reply_id": "com_biz_institution",
+                "next_node_key": "te_com_2"
+              },
+              {
+                "reply_id": "com_biz_warehouse",
+                "next_node_key": "te_com_2"
+              },
+              {
+                "reply_id": "com_biz_other",
+                "next_node_key": "te_com_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_business",
+        "text_reply_next": "te_com_2"
+      }
+    },
+    "te_com_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_bill_lt_10000",
+                "next_node_key": "te_com_3"
+              },
+              {
+                "reply_id": "com_bill_10000_25000",
+                "next_node_key": "te_com_3"
+              },
+              {
+                "reply_id": "com_bill_25000_50000",
+                "next_node_key": "te_com_3"
+              },
+              {
+                "reply_id": "com_bill_50000_100000",
+                "next_node_key": "te_com_3"
+              },
+              {
+                "reply_id": "com_bill_100000_500000",
+                "next_node_key": "te_com_3"
+              },
+              {
+                "reply_id": "com_bill_gt_500000",
+                "next_node_key": "te_com_3"
+              },
+              {
+                "reply_id": "com_bill_unsure",
+                "next_node_key": "te_com_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_bill",
+        "text_reply_next": "te_com_3"
+      }
+    },
+    "te_com_3": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "te_com_4"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "te_com_4"
+      }
+    },
+    "te_com_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "com_site_rcc",
+                "next_node_key": "te_com_5"
+              },
+              {
+                "reply_id": "com_site_sheet",
+                "next_node_key": "te_com_5"
+              },
+              {
+                "reply_id": "com_site_land",
+                "next_node_key": "te_com_5"
+              },
+              {
+                "reply_id": "com_site_both",
+                "next_node_key": "te_com_5"
+              },
+              {
+                "reply_id": "com_site_unsure",
+                "next_node_key": "te_com_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "com_site",
+        "text_reply_next": "te_com_5"
+      }
+    },
+    "te_com_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "te_com_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "te_com_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "te_com_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "te_com_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "te_com_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "te_com_name_check"
+      }
+    },
+    "te_com_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "te_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "te_confirm"
+      }
+    },
+    "te_com_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "te_confirm",
+        "false_next": "te_com_name"
+      }
+    },
+    "te_confirm": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "callback_yes",
+            "next_node_key": "score"
+          },
+          {
+            "reply_id": "callback_choose_time",
+            "next_node_key": "te_callback_time"
+          },
+          {
+            "reply_id": "callback_not_now",
+            "next_node_key": "score"
+          }
+        ],
+        "save_as": "callback_consent",
+        "text_reply_next": "score"
+      }
+    },
+    "te_consent_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "callback_consent",
+        "operator": "equals",
+        "value": "callback_yes",
+        "true_next": "te_final_callback",
+        "false_next": "te_time_check"
+      }
+    },
+    "te_final_callback": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "handoff"
+      }
+    },
+    "te_final_not_now": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "handoff"
+      }
+    },
+    "te_pump_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_use_irrigation",
+                "next_node_key": "te_pump_2"
+              },
+              {
+                "reply_id": "pump_use_drinking",
+                "next_node_key": "te_pump_2"
+              },
+              {
+                "reply_id": "pump_use_livestock",
+                "next_node_key": "te_pump_2"
+              },
+              {
+                "reply_id": "pump_use_other",
+                "next_node_key": "te_pump_2"
+              },
+              {
+                "reply_id": "pump_use_unsure",
+                "next_node_key": "te_pump_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_use",
+        "text_reply_next": "te_pump_2"
+      }
+    },
+    "te_pump_2": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "te_pump_3"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "te_pump_3"
+      }
+    },
+    "te_pump_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_hp_3",
+                "next_node_key": "te_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_5",
+                "next_node_key": "te_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_7_5",
+                "next_node_key": "te_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_10",
+                "next_node_key": "te_pump_4"
+              },
+              {
+                "reply_id": "pump_hp_unsure",
+                "next_node_key": "te_pump_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_hp",
+        "text_reply_next": "te_pump_4"
+      }
+    },
+    "te_pump_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "pump_conn_grid",
+                "next_node_key": "te_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_diesel",
+                "next_node_key": "te_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_none",
+                "next_node_key": "te_pump_5"
+              },
+              {
+                "reply_id": "pump_conn_unsure",
+                "next_node_key": "te_pump_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "pump_connection",
+        "text_reply_next": "te_pump_5"
+      }
+    },
+    "te_pump_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "te_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "te_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "te_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "te_pump_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "te_pump_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "te_pump_name_check"
+      }
+    },
+    "te_pump_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "te_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "te_confirm"
+      }
+    },
+    "te_pump_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "te_confirm",
+        "false_next": "te_pump_name"
+      }
+    },
+    "te_res_1": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_prop_house",
+                "next_node_key": "te_res_2"
+              },
+              {
+                "reply_id": "res_prop_apartment",
+                "next_node_key": "te_res_2"
+              },
+              {
+                "reply_id": "res_prop_villa",
+                "next_node_key": "te_res_2"
+              },
+              {
+                "reply_id": "res_prop_other",
+                "next_node_key": "te_res_2"
+              },
+              {
+                "reply_id": "res_prop_unsure",
+                "next_node_key": "te_res_2"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_property",
+        "text_reply_next": "te_res_2"
+      }
+    },
+    "te_res_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_bill_lt_1500",
+                "next_node_key": "te_res_3"
+              },
+              {
+                "reply_id": "res_bill_1500_2500",
+                "next_node_key": "te_res_3"
+              },
+              {
+                "reply_id": "res_bill_2500_4000",
+                "next_node_key": "te_res_3"
+              },
+              {
+                "reply_id": "res_bill_4000_8000",
+                "next_node_key": "te_res_3"
+              },
+              {
+                "reply_id": "res_bill_8000_15000",
+                "next_node_key": "te_res_3"
+              },
+              {
+                "reply_id": "res_bill_gt_15000",
+                "next_node_key": "te_res_3"
+              },
+              {
+                "reply_id": "res_bill_unsure",
+                "next_node_key": "te_res_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_bill",
+        "text_reply_next": "te_res_3"
+      }
+    },
+    "te_res_3": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "te_res_4"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "te_res_4"
+      }
+    },
+    "te_res_4": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "res_roof_rcc",
+                "next_node_key": "te_res_5"
+              },
+              {
+                "reply_id": "res_roof_sheet",
+                "next_node_key": "te_res_5"
+              },
+              {
+                "reply_id": "res_roof_tile",
+                "next_node_key": "te_res_5"
+              },
+              {
+                "reply_id": "res_roof_shared",
+                "next_node_key": "te_res_5"
+              },
+              {
+                "reply_id": "res_roof_unsure",
+                "next_node_key": "te_res_5"
+              }
+            ]
+          }
+        ],
+        "save_as": "res_roof",
+        "text_reply_next": "te_res_5"
+      }
+    },
+    "te_res_5": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "te_res_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "te_res_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "te_res_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "te_res_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "te_res_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "te_res_name_check"
+      }
+    },
+    "te_res_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "te_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "te_confirm"
+      }
+    },
+    "te_res_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "te_confirm",
+        "false_next": "te_res_name"
+      }
+    },
+    "te_soc_1": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "soc_name_skip",
+            "next_node_key": "te_soc_2"
+          }
+        ],
+        "save_as": "soc_name",
+        "text_reply_next": "te_soc_2"
+      }
+    },
+    "te_soc_2": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_homes_lt_25",
+                "next_node_key": "te_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_25_50",
+                "next_node_key": "te_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_50_100",
+                "next_node_key": "te_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_100_250",
+                "next_node_key": "te_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_gt_250",
+                "next_node_key": "te_soc_3"
+              },
+              {
+                "reply_id": "soc_homes_unsure",
+                "next_node_key": "te_soc_3"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_homes",
+        "text_reply_next": "te_soc_3"
+      }
+    },
+    "te_soc_3": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_needs_lighting",
+                "next_node_key": "te_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_lifts",
+                "next_node_key": "te_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_all",
+                "next_node_key": "te_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_ev",
+                "next_node_key": "te_soc_4"
+              },
+              {
+                "reply_id": "soc_needs_unsure",
+                "next_node_key": "te_soc_4"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_needs",
+        "text_reply_next": "te_soc_4"
+      }
+    },
+    "te_soc_4": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "city_skip",
+            "next_node_key": "te_soc_5"
+          }
+        ],
+        "save_as": "city",
+        "text_reply_next": "te_soc_5"
+      }
+    },
+    "te_soc_5": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "soc_roof_yes",
+            "next_node_key": "te_soc_6"
+          },
+          {
+            "reply_id": "soc_roof_partly",
+            "next_node_key": "te_soc_6"
+          },
+          {
+            "reply_id": "soc_roof_unsure",
+            "next_node_key": "te_soc_6"
+          }
+        ],
+        "save_as": "soc_rooftop",
+        "text_reply_next": "te_soc_6"
+      }
+    },
+    "te_soc_6": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "soc_role_committee",
+                "next_node_key": "te_soc_7"
+              },
+              {
+                "reply_id": "soc_role_manager",
+                "next_node_key": "te_soc_7"
+              },
+              {
+                "reply_id": "soc_role_resident",
+                "next_node_key": "te_soc_7"
+              },
+              {
+                "reply_id": "soc_role_builder",
+                "next_node_key": "te_soc_7"
+              },
+              {
+                "reply_id": "soc_role_other",
+                "next_node_key": "te_soc_7"
+              }
+            ]
+          }
+        ],
+        "save_as": "soc_role",
+        "text_reply_next": "te_soc_7"
+      }
+    },
+    "te_soc_7": {
+      "type": "send_list",
+      "config": {
+        "sections": [
+          {
+            "rows": [
+              {
+                "reply_id": "timeline_1m",
+                "next_node_key": "te_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_3m",
+                "next_node_key": "te_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_6m",
+                "next_node_key": "te_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_exploring",
+                "next_node_key": "te_soc_name_check"
+              },
+              {
+                "reply_id": "timeline_unsure",
+                "next_node_key": "te_soc_name_check"
+              }
+            ]
+          }
+        ],
+        "save_as": "timeline",
+        "text_reply_next": "te_soc_name_check"
+      }
+    },
+    "te_soc_name": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "name_skip",
+            "next_node_key": "te_confirm"
+          }
+        ],
+        "save_as": "customer_name",
+        "text_reply_next": "te_confirm"
+      }
+    },
+    "te_soc_name_check": {
+      "type": "condition",
+      "config": {
+        "subject": "contact_field",
+        "subject_key": "name",
+        "operator": "present",
+        "true_next": "te_confirm",
+        "false_next": "te_soc_name"
+      }
+    },
+    "te_talk_sales": {
+      "type": "send_message",
+      "config": {
+        "next_node_key": "sales_request_crm"
+      }
+    },
+    "te_time_check": {
+      "type": "condition",
+      "config": {
+        "subject": "var",
+        "subject_key": "callback_time",
+        "operator": "present",
+        "true_next": "te_final_callback",
+        "false_next": "te_final_not_now"
+      }
+    },
+    "welcome": {
+      "type": "send_buttons",
+      "config": {
+        "buttons": [
+          {
+            "reply_id": "lang_en",
+            "next_node_key": "en_category"
+          },
+          {
+            "reply_id": "lang_hi",
+            "next_node_key": "hi_category"
+          },
+          {
+            "reply_id": "lang_te",
+            "next_node_key": "te_category"
+          }
+        ],
+        "save_as": "language"
+      }
+    }
+  }
+}
